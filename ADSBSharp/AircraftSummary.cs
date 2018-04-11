@@ -7,7 +7,7 @@ using VirtualRadar.Interface.Adsb;
 
 namespace ADSBSharp
 {
-    class AircraftSummary
+    public class AircraftSummary
     {
         public string IcaoCode { get; set; }
 
