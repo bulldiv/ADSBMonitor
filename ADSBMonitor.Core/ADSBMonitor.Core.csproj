@@ -1,7 +1,108 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E6BCA285-A0DC-4EDA-A884-FDCC8DC21F7D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ADSBMonitor.Core</RootNamespace>
+    <AssemblyName>ADSBMonitor.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ADSBSharp\AdsbBitDecoder.cs" />
+    <Compile Include="ADSBSharp\AdsbHubClient.cs" />
+    <Compile Include="ADSBSharp\IFrameSink.cs" />
+    <Compile Include="ADSBSharp\SimpleTCPServer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VirtualRadar\AdsbMessage.cs" />
+    <Compile Include="VirtualRadar\AdsbTranslator.cs" />
+    <Compile Include="VirtualRadar\AirbornePositionMessage.cs" />
+    <Compile Include="VirtualRadar\AirborneVelocityMessage.cs" />
+    <Compile Include="VirtualRadar\AircraftOperationalStatusMessage.cs" />
+    <Compile Include="VirtualRadar\AircraftOperationalStatusType.cs" />
+    <Compile Include="VirtualRadar\AircraftStatusMessage.cs" />
+    <Compile Include="VirtualRadar\AircraftStatusType.cs" />
+    <Compile Include="VirtualRadar\ApplicationField.cs" />
+    <Compile Include="VirtualRadar\BitStream.cs" />
+    <Compile Include="VirtualRadar\Capability.cs" />
+    <Compile Include="VirtualRadar\CoarseTisbAirbornePosition.cs" />
+    <Compile Include="VirtualRadar\CompactPositionReportingCoordinate.cs" />
+    <Compile Include="VirtualRadar\ControlField.cs" />
+    <Compile Include="VirtualRadar\DownlinkFormat.cs" />
+    <Compile Include="VirtualRadar\ElmControl.cs" />
+    <Compile Include="VirtualRadar\EmergencyState.cs" />
+    <Compile Include="VirtualRadar\EmergencyStatus.cs" />
+    <Compile Include="VirtualRadar\EmitterCategory.cs" />
+    <Compile Include="VirtualRadar\FlightStatus.cs" />
+    <Compile Include="VirtualRadar\HorizontalDataSource.cs" />
+    <Compile Include="VirtualRadar\HorizontalModeIndicator.cs" />
+    <Compile Include="VirtualRadar\IdentifierAndCategoryMessage.cs" />
+    <Compile Include="VirtualRadar\IStatistics.cs" />
+    <Compile Include="VirtualRadar\MessageFormat.cs" />
+    <Compile Include="VirtualRadar\ModeATranslator.cs" />
+    <Compile Include="VirtualRadar\ModeSAltitudeConversion.cs" />
+    <Compile Include="VirtualRadar\ModeSCharacterTranslator.cs" />
+    <Compile Include="VirtualRadar\ModeSDFStatistics.cs" />
+    <Compile Include="VirtualRadar\ModeSMessage.cs" />
+    <Compile Include="VirtualRadar\ModeSTranslator.cs" />
+    <Compile Include="VirtualRadar\MultipleThreatResolutionAdvisory.cs" />
+    <Compile Include="VirtualRadar\OperationalMode.cs" />
+    <Compile Include="VirtualRadar\ResolutionAdvisoryComplement.cs" />
+    <Compile Include="VirtualRadar\SingleThreatResolutionAdvisory.cs" />
+    <Compile Include="VirtualRadar\Statistics.cs" />
+    <Compile Include="VirtualRadar\SurfaceCapability.cs" />
+    <Compile Include="VirtualRadar\SurfacePositionMessage.cs" />
+    <Compile Include="VirtualRadar\SurveillanceStatus.cs" />
+    <Compile Include="VirtualRadar\SystemDesignAssurance.cs" />
+    <Compile Include="VirtualRadar\TargetAltitudeCapability.cs" />
+    <Compile Include="VirtualRadar\TargetStateAndStatusMessage.cs" />
+    <Compile Include="VirtualRadar\TargetStateAndStatusType.cs" />
+    <Compile Include="VirtualRadar\TargetStateAndStatusVersion1.cs" />
+    <Compile Include="VirtualRadar\TargetStateAndStatusVersion2.cs" />
+    <Compile Include="VirtualRadar\TcasCapabilityMode.cs" />
+    <Compile Include="VirtualRadar\TcasResolutionAdvisory.cs" />
+    <Compile Include="VirtualRadar\VectorVelocity.cs" />
+    <Compile Include="VirtualRadar\VelocityType.cs" />
+    <Compile Include="VirtualRadar\VerticalDataSource.cs" />
+    <Compile Include="VirtualRadar\VerticalModeIndicator.cs" />
+    <Compile Include="VirtualRadar\VerticalStatus.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>
