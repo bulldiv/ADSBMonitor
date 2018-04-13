@@ -137,7 +137,7 @@ namespace VirtualRadar.Interface.Adsb
             if(VerticalRate != null) result.AppendFormat(" VSI:{0}{1}", VerticalRate, VerticalRateExceeded ? "*" : "");
             if(GeometricAltitudeDelta != null) result.AppendFormat(" DBA:{0}{1}", GeometricAltitudeDelta, GeometricAltitudeDeltaExceeded ? "*" : "0");
             if(Heading != null) result.AppendFormat(" HDG:{0}", Heading);
-            if(Airspeed != null) result.AppendFormat(" AS:{1}{2}{3}", AirspeedIsTrueAirspeed ? "T" : "I", Airspeed, AirspeedExceeded ? "*" : "0");
+            if(Airspeed != null) result.AppendFormat(" AS:{0}{1}{2}", AirspeedIsTrueAirspeed ? "T" : "I", Airspeed, AirspeedExceeded ? "*" : "0");
 
             return result.ToString();
         }

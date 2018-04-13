@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using VirtualRadar.Interface.Adsb;
@@ -14,7 +14,6 @@ namespace ADSBSharp
 {
     public unsafe partial class MainForm : Form
     {        
-        private IFrameSink _frameSink;
         private readonly AdsbBitDecoder _decoder = new AdsbBitDecoder();
         private readonly RtlSdrIO _rtlDevice = new RtlSdrIO();        
         private bool _isDecoding;        
@@ -22,110 +21,124 @@ namespace ADSBSharp
         private int _frameCount;
         private float _avgFps;
 
-        private AdsbTranslator adsbTranslator;
-
-        private Dictionary<string, AircraftSummary> _aircraftByIcaoCode = new Dictionary<string, AircraftSummary>();
+        private DataTable _dataSet = new DataTable();
 
         public MainForm()
         {
             InitializeComponent();
 
-            adsbTranslator = new AdsbTranslator();
+            _dataSet.Columns.Add("ICAO", typeof(string));
+            _dataSet.Columns.Add("LastUpdate", typeof(DateTime));
+            _dataSet.Columns.Add("Identification", typeof(string));
+            _dataSet.Columns.Add("AirborneVelocity", typeof(string));
+            _dataSet.Columns.Add("Sil", typeof(string));
+            _dataSet.Columns.Add("SystemDesignAssurance", typeof(string));
+            _dataSet.Columns.Add("BarometricAltitude", typeof(string));
+            _dataSet.Columns.Add("Lattitude", typeof(string));
+            _dataSet.Columns.Add("Longitude", typeof(string));
+
+            dataGridView1.DataSource = _dataSet;
+            dataGridView1.Columns[1].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm:ss";
+            //dataGridView1.Columns[3].DefaultCellStyle.Format = "0.##";
+
+            var adsbTranslator = new AdsbTranslator();
             adsbTranslator.Statistics = new Statistics();
 
             Text = "ADSB# v" + Assembly.GetExecutingAssembly().GetName().Version;
 
             _decoder.FrameReceived += delegate(byte[] frame, int length)
-                                          {
-                                              Interlocked.Increment(ref _frameCount);
-                                              _frameSink.FrameReady(frame, length);
+            {
+                Interlocked.Increment(ref _frameCount);
 
+                var t = new ModeSTranslator();
+                t.Statistics = new Statistics();
+                var modeSMessage = t.Translate(frame, 0, null, false);
 
-                                              var t = new ModeSTranslator();
-                                              t.Statistics = new Statistics();
-                                              var modeSMessage = t.Translate(frame, 0, null, false);
+                AdsbTranslator t2 = new AdsbTranslator();
+                t2.Statistics = new Statistics();
+                AdsbMessage adsbMessage = t2.Translate(modeSMessage);
 
-                                              AdsbTranslator t2 = new AdsbTranslator();
-                                              t2.Statistics = new Statistics();
-                                              var adsbMessage = t2.Translate(modeSMessage);
+                if (adsbMessage != null)
+                {
+                    BeginInvoke(new Action(delegate
+                    {
+                        Debug.Print(adsbMessage.ToString());
+                        UpdateView(adsbMessage);
+                    }));
 
-                                              if (adsbMessage != null)
-                                              {
-                                                  string icao = adsbMessage.ModeSMessage.FormattedIcao24;
+                }
+            };
 
-                                                  if (adsbMessage.MessageFormat == MessageFormat.IdentificationAndCategory)
-                                                  {
-                                                      Console.WriteLine("IdentificationAndCategory Message received: " + adsbMessage.ModeSMessage.FormattedIcao24);
-
-                                                      if (!_aircraftByIcaoCode.ContainsKey(adsbMessage.ModeSMessage.FormattedIcao24))
-                                                      {
-                                                          _aircraftByIcaoCode.Add(icao, new AircraftSummary());
-                                                          _aircraftByIcaoCode[icao].IcaoCode = icao;
-                                                          _aircraftByIcaoCode[icao].Registration = adsbMessage.IdentifierAndCategory.Identification;
-                                                      }
-                                                  }
-
-                                                  if (adsbMessage.MessageFormat == MessageFormat.AircraftOperationalStatus)
-                                                  {
-                                                      Console.WriteLine("AircraftOperationalStatus Message received: " + adsbMessage.ModeSMessage.FormattedIcao24);
-
-                                                      if (_aircraftByIcaoCode.ContainsKey(adsbMessage.ModeSMessage.FormattedIcao24))
-                                                      {
-                                                          _aircraftByIcaoCode[icao].SIL = adsbMessage.AircraftOperationalStatus.Sil;
-                                                          _aircraftByIcaoCode[icao].SDA = adsbMessage.AircraftOperationalStatus.SystemDesignAssurance;
-                                                      }
-                                                  }
-
-                                                  if (adsbMessage.MessageFormat == MessageFormat.AirborneVelocity)
-                                                  {
-                                                      Console.WriteLine("AirborneVelocity Message received: " + adsbMessage.ModeSMessage.FormattedIcao24);
-
-                                                      if (_aircraftByIcaoCode.ContainsKey(adsbMessage.ModeSMessage.FormattedIcao24))
-                                                      {
-                                                          _aircraftByIcaoCode[icao].Airspeed = adsbMessage.AirborneVelocity.Airspeed;
-                                                      }
-                                                  }
-                                              }
-
-                                              //if (adsbMessage != null)
-                                              //{
-                                              //    //Debug.WriteLine(BitConverter.ToString(frame));
-                                              //    Debug.WriteLine("ICAO" + modeSMessage.FormattedIcao24 + " " + adsbMessage);
-                                              //}
-
-
-                                              string aircraftString = string.Empty;
-
-                                              foreach (var aircraft in _aircraftByIcaoCode)
-                                              {
-                                                  aircraftString = aircraftString + (aircraft.Value.ToString()) + Environment.NewLine;
-                                              }
-
-                                              BeginInvoke(new Action(() => resultsTextBox.Text = aircraftString));
-                                              
-
-                                          };
-
-            portNumericUpDown_ValueChanged(null, null);
             confidenceNumericUpDown_ValueChanged(null, null);
             timeoutNumericUpDown_ValueChanged(null, null);
 
             try
             {
                 _rtlDevice.Open();
-                
+
                 var devices = DeviceDisplay.GetActiveDevices();
                 deviceComboBox.Items.Clear();
                 deviceComboBox.Items.AddRange(devices);
 
                 //_initialized = true;
                 deviceComboBox.SelectedIndex = 0;
-                deviceComboBox_SelectedIndexChanged(null, null);                                              
+                deviceComboBox_SelectedIndexChanged(null, null);
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
-            }                        
+            }
+        }
+
+        private void UpdateViewModelField(string icao, string fieldName, string fieldValue)
+        {
+
+            var rows = _dataSet.Select(string.Format("ICAO = '{0}'", icao));
+            if (rows.Any())
+            {
+                foreach (var row in rows)
+                {
+                    row[fieldName] = fieldValue;
+                    row["LastUpdate"] = DateTime.UtcNow;
+                }
+            }
+            else
+            {
+                _dataSet.LoadDataRow(
+                    new object[]
+                    {
+                        icao, DateTime.UtcNow, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+                        string.Empty
+                    }, LoadOption.Upsert);
+            }
+        }
+
+        private void UpdateView(AdsbMessage message)
+        {
+            string key = message.ModeSMessage.FormattedIcao24;
+
+            switch (message.MessageFormat)
+            {
+                case MessageFormat.IdentificationAndCategory:
+                    UpdateViewModelField(key, "Identification", message.IdentifierAndCategory.Identification);
+                    break;
+                case MessageFormat.AirborneVelocity:
+                    if (message.AirborneVelocity.VectorVelocity != null)
+                    {
+                        UpdateViewModelField(key, "AirborneVelocity", message.AirborneVelocity.VectorVelocity.Speed.ToString());
+                    }
+                    break;
+                case MessageFormat.AircraftOperationalStatus:
+                    UpdateViewModelField(key, "Sil", message.AircraftOperationalStatus.Sil.ToString());
+                    UpdateViewModelField(key, "SystemDesignAssurance",
+                        message.AircraftOperationalStatus.SystemDesignAssurance.ToString());
+                    break;
+                case MessageFormat.AirbornePosition:
+                    UpdateViewModelField(key, "BarometricAltitude", message.AirbornePosition.BarometricAltitude.ToString());
+                    UpdateViewModelField(key, "Lattitude", message.AirbornePosition.CompactPosition.Latitude.ToString());
+                    UpdateViewModelField(key, "Longitude", message.AirbornePosition.CompactPosition.Longitude.ToString());
+                    break;
+            }
         }
 
         #region GUI Controls
@@ -143,9 +156,6 @@ namespace ADSBSharp
 
             startBtn.Text = _isDecoding ? "Stop" : "Start";
             deviceComboBox.Enabled = !_rtlDevice.Device.IsStreaming;
-            portNumericUpDown.Enabled = !_rtlDevice.Device.IsStreaming;
-            shareCb.Enabled = !_rtlDevice.Device.IsStreaming;
-            hostnameTb.Enabled = !_rtlDevice.Device.IsStreaming && shareCb.Checked;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -158,10 +168,6 @@ namespace ADSBSharp
        
         private void deviceComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //if (!_initialized)
-            //{
-            //    return;
-            //}
             var deviceDisplay = (DeviceDisplay) deviceComboBox.SelectedItem;
             if (deviceDisplay != null)
             {
@@ -270,26 +276,6 @@ namespace ADSBSharp
         {                        
             try
             {
-                if (shareCb.Checked)
-                {
-                    _frameSink = new AdsbHubClient();
-                }
-                else
-                {
-                    _frameSink = new SimpleTcpServer();
-                }
-                
-                _frameSink.Start(hostnameTb.Text,(int) portNumericUpDown.Value);
-            }
-            catch (Exception e)
-            {
-                StopDecoding();
-                MessageBox.Show("Unable to start networking\n" + e.Message);
-                return;
-            }
-
-            try
-            {
                 _rtlDevice.Start(rtl_SamplesAvailable);
             }
             catch (Exception e)
@@ -305,8 +291,6 @@ namespace ADSBSharp
         private void StopDecoding()
         {
             _rtlDevice.Stop();
-            _frameSink.Stop();
-            _frameSink = null;
             _isDecoding = false;
             _avgFps = 0f;
             _frameCount = 0;
@@ -346,10 +330,6 @@ namespace ADSBSharp
             WindowState = FormWindowState.Normal;
         }
 
-        private void portNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            notifyIcon.Text = Text + " on port " + portNumericUpDown.Value;
-        }
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
@@ -371,11 +351,6 @@ namespace ADSBSharp
         private void timeoutNumericUpDown_ValueChanged(object sender, EventArgs e)
         {
             _decoder.Timeout = (int) timeoutNumericUpDown.Value;
-        }
-
-        private void shareCb_CheckedChanged(object sender, EventArgs e)
-        {
-            hostnameTb.Enabled = shareCb.Checked;
         }
     }
 

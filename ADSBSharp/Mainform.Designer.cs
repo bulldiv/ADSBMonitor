@@ -50,21 +50,20 @@
             this.framesPerSecLbl = new System.Windows.Forms.Label();
             this.fpsLabel = new System.Windows.Forms.Label();
             this.fpsTimer = new System.Windows.Forms.Timer(this.components);
-            this.portNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.shareCb = new System.Windows.Forms.CheckBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.hostnameTb = new System.Windows.Forms.TextBox();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
-            this.resultsTextBox = new System.Windows.Forms.TextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.mainFormBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.tunerGainTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frequencyCorrectionNumericUpDown)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.confidenceNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.portNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mainFormBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // deviceComboBox
@@ -198,7 +197,7 @@
             // startBtn
             // 
             this.startBtn.Enabled = false;
-            this.startBtn.Location = new System.Drawing.Point(12, 12);
+            this.startBtn.Location = new System.Drawing.Point(209, 23);
             this.startBtn.Name = "startBtn";
             this.startBtn.Size = new System.Drawing.Size(75, 23);
             this.startBtn.TabIndex = 0;
@@ -312,39 +311,6 @@
             this.fpsTimer.Interval = 500;
             this.fpsTimer.Tick += new System.EventHandler(this.fpsTimer_Tick);
             // 
-            // portNumericUpDown
-            // 
-            this.portNumericUpDown.Location = new System.Drawing.Point(184, 15);
-            this.portNumericUpDown.Maximum = new decimal(new int[] {
-            65536,
-            0,
-            0,
-            0});
-            this.portNumericUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.portNumericUpDown.Name = "portNumericUpDown";
-            this.portNumericUpDown.Size = new System.Drawing.Size(98, 20);
-            this.portNumericUpDown.TabIndex = 1;
-            this.portNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.portNumericUpDown.Value = new decimal(new int[] {
-            47806,
-            0,
-            0,
-            0});
-            this.portNumericUpDown.ValueChanged += new System.EventHandler(this.portNumericUpDown_ValueChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(152, 17);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(26, 13);
-            this.label3.TabIndex = 34;
-            this.label3.Text = "Port";
-            // 
             // notifyIcon
             // 
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
@@ -352,63 +318,54 @@
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
-            // shareCb
+            // textBox1
             // 
-            this.shareCb.AutoSize = true;
-            this.shareCb.Location = new System.Drawing.Point(12, 44);
-            this.shareCb.Name = "shareCb";
-            this.shareCb.Size = new System.Drawing.Size(128, 17);
-            this.shareCb.TabIndex = 35;
-            this.shareCb.Text = "Share with ADSBHub";
-            this.shareCb.UseVisualStyleBackColor = true;
-            this.shareCb.CheckedChanged += new System.EventHandler(this.shareCb_CheckedChanged);
+            this.textBox1.Location = new System.Drawing.Point(97, 23);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(90, 20);
+            this.textBox1.TabIndex = 39;
             // 
-            // label6
+            // label3
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(149, 45);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(29, 13);
-            this.label6.TabIndex = 36;
-            this.label6.Text = "Host";
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(15, 26);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(68, 13);
+            this.label3.TabIndex = 42;
+            this.label3.Text = "Aircraft ICAO";
             // 
-            // hostnameTb
+            // dataGridView1
             // 
-            this.hostnameTb.Enabled = false;
-            this.hostnameTb.Location = new System.Drawing.Point(184, 41);
-            this.hostnameTb.Name = "hostnameTb";
-            this.hostnameTb.Size = new System.Drawing.Size(98, 20);
-            this.hostnameTb.TabIndex = 37;
-            this.hostnameTb.Text = "sdrsharp.com";
-            // 
-            // resultsTextBox
-            // 
-            this.resultsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.resultsTextBox.Location = new System.Drawing.Point(322, 17);
-            this.resultsTextBox.Multiline = true;
-            this.resultsTextBox.Name = "resultsTextBox";
-            this.resultsTextBox.Size = new System.Drawing.Size(736, 411);
-            this.resultsTextBox.TabIndex = 38;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dataGridView1.Location = new System.Drawing.Point(303, 21);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.ShowEditingIcon = false;
+            this.dataGridView1.Size = new System.Drawing.Size(671, 325);
+            this.dataGridView1.TabIndex = 49;
+            // 
+            // mainFormBindingSource
+            // 
+            this.mainFormBindingSource.DataSource = typeof(ADSBSharp.MainForm);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1072, 449);
-            this.Controls.Add(this.resultsTextBox);
-            this.Controls.Add(this.hostnameTb);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.shareCb);
+            this.ClientSize = new System.Drawing.Size(986, 358);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.portNumericUpDown);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.startBtn);
             this.Controls.Add(this.groupBox1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ADSB#";
@@ -422,7 +379,8 @@
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.confidenceNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.portNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mainFormBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -446,18 +404,16 @@
         private System.Windows.Forms.Label framesPerSecLbl;
         private System.Windows.Forms.Label fpsLabel;
         private System.Windows.Forms.Timer fpsTimer;
-        private System.Windows.Forms.NumericUpDown portNumericUpDown;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown confidenceNumericUpDown;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.NumericUpDown timeoutNumericUpDown;
-        private System.Windows.Forms.CheckBox shareCb;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox hostnameTb;
         private System.IO.Ports.SerialPort serialPort1;
-        private System.Windows.Forms.TextBox resultsTextBox;
+        private System.Windows.Forms.BindingSource mainFormBindingSource;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
 

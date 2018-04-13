@@ -163,9 +163,10 @@ namespace VirtualRadar.Interface.Adsb
         /// <returns></returns>
         public override string ToString()
         {
-            return String.Format("{0}{1}{2}/{3}{4}{5}",
+            return String.Format("{0}{1}{2}/{3}{4}{5}/SPD={6}",
                 EastWestVelocity, IsWesterlyVelocity ? 'W' : 'E', EastWestExceeded ? "*" : "",
-                NorthSouthVelocity, IsSoutherlyVelocity ? 'S' : 'N', NorthSouthExceeded ? "*" : ""
+                NorthSouthVelocity, IsSoutherlyVelocity ? 'S' : 'N', NorthSouthExceeded ? "*" : "",
+                Speed
             );
         }
     }
