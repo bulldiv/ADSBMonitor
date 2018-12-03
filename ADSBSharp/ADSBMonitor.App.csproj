@@ -38,7 +38,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>radar.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -95,7 +96,6 @@
     <Content Include="rtlsdr.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="radar.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ADSBMonitor.Core\ADSBMonitor.Core.csproj">
