@@ -52,9 +52,8 @@
             this.fpsTimer = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.cullTimer = new System.Windows.Forms.Timer(this.components);
             this.mainFormBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.tunerGainTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frequencyCorrectionNumericUpDown)).BeginInit();
@@ -88,7 +87,7 @@
             // tunerGainTrackBar
             // 
             this.tunerGainTrackBar.Enabled = false;
-            this.tunerGainTrackBar.Location = new System.Drawing.Point(6, 119);
+            this.tunerGainTrackBar.Location = new System.Drawing.Point(295, 31);
             this.tunerGainTrackBar.Maximum = 10000;
             this.tunerGainTrackBar.Name = "tunerGainTrackBar";
             this.tunerGainTrackBar.Size = new System.Drawing.Size(258, 45);
@@ -98,7 +97,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 103);
+            this.label2.Location = new System.Drawing.Point(304, 15);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(46, 13);
             this.label2.TabIndex = 22;
@@ -119,7 +118,7 @@
             // 
             // gainLabel
             // 
-            this.gainLabel.Location = new System.Drawing.Point(194, 103);
+            this.gainLabel.Location = new System.Drawing.Point(483, 15);
             this.gainLabel.Name = "gainLabel";
             this.gainLabel.Size = new System.Drawing.Size(68, 13);
             this.gainLabel.TabIndex = 26;
@@ -129,7 +128,7 @@
             // 
             // frequencyCorrectionNumericUpDown
             // 
-            this.frequencyCorrectionNumericUpDown.Location = new System.Drawing.Point(172, 169);
+            this.frequencyCorrectionNumericUpDown.Location = new System.Drawing.Point(461, 81);
             this.frequencyCorrectionNumericUpDown.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -149,7 +148,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 171);
+            this.label4.Location = new System.Drawing.Point(301, 83);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(136, 13);
             this.label4.TabIndex = 28;
@@ -187,9 +186,9 @@
             this.groupBox1.Controls.Add(this.frequencyCorrectionNumericUpDown);
             this.groupBox1.Controls.Add(this.tunerAgcCheckBox);
             this.groupBox1.Controls.Add(this.gainLabel);
-            this.groupBox1.Location = new System.Drawing.Point(12, 142);
+            this.groupBox1.Location = new System.Drawing.Point(298, 21);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(270, 202);
+            this.groupBox1.Size = new System.Drawing.Size(676, 114);
             this.groupBox1.TabIndex = 30;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "RTL-SDR Control";
@@ -197,7 +196,7 @@
             // startBtn
             // 
             this.startBtn.Enabled = false;
-            this.startBtn.Location = new System.Drawing.Point(209, 23);
+            this.startBtn.Location = new System.Drawing.Point(207, 98);
             this.startBtn.Name = "startBtn";
             this.startBtn.Size = new System.Drawing.Size(75, 23);
             this.startBtn.TabIndex = 0;
@@ -213,7 +212,7 @@
             this.groupBox2.Controls.Add(this.confidenceNumericUpDown);
             this.groupBox2.Controls.Add(this.framesPerSecLbl);
             this.groupBox2.Controls.Add(this.fpsLabel);
-            this.groupBox2.Location = new System.Drawing.Point(12, 67);
+            this.groupBox2.Location = new System.Drawing.Point(12, 21);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(270, 69);
             this.groupBox2.TabIndex = 32;
@@ -318,22 +317,6 @@
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(97, 23);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(90, 20);
-            this.textBox1.TabIndex = 39;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 26);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 13);
-            this.label3.TabIndex = 42;
-            this.label3.Text = "Aircraft ICAO";
-            // 
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToAddRows = false;
@@ -343,12 +326,19 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridView1.Location = new System.Drawing.Point(303, 21);
+            this.dataGridView1.Location = new System.Drawing.Point(12, 141);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.ShowEditingIcon = false;
-            this.dataGridView1.Size = new System.Drawing.Size(671, 325);
+            this.dataGridView1.Size = new System.Drawing.Size(963, 373);
             this.dataGridView1.TabIndex = 49;
+            // 
+            // cullTimer
+            // 
+            this.cullTimer.Enabled = true;
+            this.cullTimer.Interval = 10000;
+            this.cullTimer.Tick += new System.EventHandler(this.cullTimer_Tick);
             // 
             // mainFormBindingSource
             // 
@@ -358,10 +348,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(986, 358);
+            this.ClientSize = new System.Drawing.Size(987, 526);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.startBtn);
             this.Controls.Add(this.groupBox1);
@@ -382,7 +370,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mainFormBindingSource)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -411,9 +398,8 @@
         private System.Windows.Forms.NumericUpDown timeoutNumericUpDown;
         private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.BindingSource mainFormBindingSource;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Timer cullTimer;
     }
 }
 

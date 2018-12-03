@@ -132,6 +132,8 @@ namespace VirtualRadar.Library.Adsb
 
                 result = new AdsbMessage(modeSMessage);
 
+                result.ModeSMessage.Identity = modeSMessage.Identity;
+
                 if (IsCoarseFormatTisb(result))
                 {
                     DecodeCoarseTisbAirbornePosition(result);
@@ -179,6 +181,10 @@ namespace VirtualRadar.Library.Adsb
                         ++r.AdsbTypeCount[result.Type];
                     });
                 }
+            }
+            else
+            {
+                result = new AdsbMessage(modeSMessage);
             }
 
             return result;

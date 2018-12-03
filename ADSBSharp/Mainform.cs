@@ -30,17 +30,19 @@ namespace ADSBSharp
             _dataSet.Columns.Add("ICAO", typeof(string));
             _dataSet.Columns.Add("LastUpdate", typeof(DateTime));
             _dataSet.Columns.Add("Identification", typeof(string));
+            _dataSet.Columns.Add("Category", typeof(string));
+            _dataSet.Columns.Add("Squawk", typeof(string));
             _dataSet.Columns.Add("AirborneVelocity", typeof(string));
-            _dataSet.Columns.Add("Sil", typeof(string));
-            _dataSet.Columns.Add("SystemDesignAssurance", typeof(string));
+            _dataSet.Columns.Add("SIL", typeof(string));
+            _dataSet.Columns.Add("SDA", typeof(string));
             _dataSet.Columns.Add("BarometricAltitude", typeof(string));
             _dataSet.Columns.Add("Lattitude", typeof(string));
             _dataSet.Columns.Add("Longitude", typeof(string));
 
             dataGridView1.DataSource = _dataSet;
-            dataGridView1.Columns[1].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm:ss";
-            //dataGridView1.Columns[3].DefaultCellStyle.Format = "0.##";
-
+            dataGridView1.Columns["LastUpdate"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm:ss";
+            dataGridView1.Columns["LastUpdate"].Width = 130;
+            
             var adsbTranslator = new AdsbTranslator();
             adsbTranslator.Statistics = new Statistics();
 
@@ -113,30 +115,55 @@ namespace ADSBSharp
             }
         }
 
+        private void RemoveOldEntries()
+        {
+            var rows = _dataSet.Select(string.Format("LastUpdate < '{0}'", DateTime.UtcNow.AddMinutes(-1)));
+            if (rows.Any())
+            {
+                for (int i = 0; i < rows.Count(); i++)
+                {
+                    _dataSet.Rows.Remove(rows[i]);
+                }
+            }
+        }
+
         private void UpdateView(AdsbMessage message)
         {
             string key = message.ModeSMessage.FormattedIcao24;
+
+            if (message.ModeSMessage.Identity.HasValue)
+            {
+                UpdateViewModelField(key, "Squawk", message.ModeSMessage.Identity.Value.ToString("0000"));
+            }
 
             switch (message.MessageFormat)
             {
                 case MessageFormat.IdentificationAndCategory:
                     UpdateViewModelField(key, "Identification", message.IdentifierAndCategory.Identification);
+                    UpdateViewModelField(key, "Category", message.IdentifierAndCategory.EmitterCategory.ToString());
                     break;
                 case MessageFormat.AirborneVelocity:
-                    if (message.AirborneVelocity.VectorVelocity != null)
+                    if (message.AirborneVelocity.VectorVelocity != null && message.AirborneVelocity.VectorVelocity.Speed.HasValue)
                     {
-                        UpdateViewModelField(key, "AirborneVelocity", message.AirborneVelocity.VectorVelocity.Speed.ToString());
+                        UpdateViewModelField(key, "AirborneVelocity", Math.Round(message.AirborneVelocity.VectorVelocity.Speed.Value, 0, MidpointRounding.AwayFromZero).ToString());
                     }
                     break;
                 case MessageFormat.AircraftOperationalStatus:
-                    UpdateViewModelField(key, "Sil", message.AircraftOperationalStatus.Sil.ToString());
-                    UpdateViewModelField(key, "SystemDesignAssurance",
+                    UpdateViewModelField(key, "SIL", message.AircraftOperationalStatus.Sil.ToString());
+                    UpdateViewModelField(key, "SDA",
                         message.AircraftOperationalStatus.SystemDesignAssurance.ToString());
                     break;
                 case MessageFormat.AirbornePosition:
                     UpdateViewModelField(key, "BarometricAltitude", message.AirbornePosition.BarometricAltitude.ToString());
                     UpdateViewModelField(key, "Lattitude", message.AirbornePosition.CompactPosition.Latitude.ToString());
                     UpdateViewModelField(key, "Longitude", message.AirbornePosition.CompactPosition.Longitude.ToString());
+                    break;
+                case MessageFormat.AircraftStatus:
+                    if (message.AircraftStatus.EmergencyStatus.Squawk.HasValue)
+                    {
+                        UpdateViewModelField(key, "Squawk",
+                            message.AircraftStatus.EmergencyStatus.Squawk.Value.ToString("0000"));
+                    }
                     break;
             }
         }
@@ -147,15 +174,22 @@ namespace ADSBSharp
         {
             if (!_isDecoding)
             {
+                RemoveAllEntries();
                 StartDecoding();
             }
             else
             {
                 StopDecoding();
+                
             }
 
             startBtn.Text = _isDecoding ? "Stop" : "Start";
             deviceComboBox.Enabled = !_rtlDevice.Device.IsStreaming;
+        }
+
+        private void RemoveAllEntries()
+        {
+            _dataSet.Clear();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -352,6 +386,13 @@ namespace ADSBSharp
         {
             _decoder.Timeout = (int) timeoutNumericUpDown.Value;
         }
+
+        private void cullTimer_Tick(object sender, EventArgs e)
+        {
+            RemoveOldEntries();
+        }
+
+
     }
 
     public class DeviceDisplay
